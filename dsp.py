@@ -68,31 +68,32 @@ def espectro_envolvente(z, fs):
     idx_pos = freqs > 0  # Tomar solo f > 0 Hz
     return freqs[idx_pos], A[idx_pos]
 
-def entropia_kurtosis(z):
+def entropia_envolvente(z):
     """
-    Fase 3 (Parte 3): Métrica basada en Curtosis Espectral (Paper Benchmark CWRU).
-    La Curtosis mide la 'impulsividad' de la señal.
-    Castiga las ondas senoidales del eje (curtosis baja) y premia los impactos de falla (curtosis alta).
+    Fase 3 (Parte 3): Entropía del Envolvente Cuadrado (SEE - Antoni, 2016).
+    Aplica la fórmula de Shannon (de la pizarra) sobre la energía en el dominio del tiempo.
+    Un impacto fuerte (falla) concentra la energía, dando la entropía más baja.
     """
-    z_mean = np.mean(z)
-    z_std = np.std(z)
+    # 1. Energía temporal al cuadrado
+    z_sq = z**2
+    suma_z = np.sum(z_sq)
     
-    # Evitar divisiones por cero en bandas sin energía
-    if z_std == 0:
+    if suma_z == 0:
         return 0
         
-    # Cálculo estadístico de la Curtosis (Momentos de orden 4)
-    kurtosis = np.mean(((z - z_mean) / z_std)**4)
+    # 2. Distribución de probabilidad P_k
+    p = z_sq / suma_z
+    p = p[p > 0]  # Evitar log(0)
     
-    # TRUCO MATEMÁTICO: Como la Fase 4 busca el MÍNIMO valor (argmin), 
-    # retornamos el negativo de la curtosis. Así, la banda con MAYOR impulsividad
-    # será la más negativa y resultará seleccionada automáticamente.
-    return -kurtosis
+    # 3. Entropía de Shannon base 2
+    E = -np.sum(p * np.log2(p))
+    
+    return E
 
 def buscar_banda_optima(sub_bandas, fs):
     """
-    Fase 4: Retorna el índice (j) de la banda con "menor entropía" (mayor curtosis), 
-    sus frecuencias, su amplitud espectral y el valor evaluado.
+    Fase 4: Retorna el índice (j) de la banda con menor Entropía del Envolvente,
+    sus frecuencias, su amplitud espectral y el valor de entropía.
     """
     entropias = []
     espectros = []
@@ -104,15 +105,15 @@ def buscar_banda_optima(sub_bandas, fs):
         # 2. Espectro para retornar al main y graficar
         f, a = espectro_envolvente(z, fs)
         
-        # 3. Métrica de Curtosis (reemplazo magistral de la entropía)
-        E = entropia_kurtosis(z)
+        # 3. Métrica de Entropía sobre el dominio del tiempo
+        E = entropia_envolvente(z)
         
         entropias.append(E)
         espectros.append((f, a))
         
     idx_optimo = np.argmin(entropias)
     
-    # Se retorna idx_optimo, las freqs óptimas, la amplitud óptima y el valor de la métrica
+    # Se retorna idx_optimo, las freqs óptimas, la amplitud óptima y la menor entropía
     return idx_optimo, espectros[idx_optimo][0], espectros[idx_optimo][1], entropias[idx_optimo]
 
 def encontrar_peak_dominante(freqs, A, f_min=5.0):
@@ -145,7 +146,7 @@ if __name__ == "__main__":
     
     # Probar Fases 3 y 4
     idx_optimo, f_opt, A_opt, E_min = buscar_banda_optima(sub_bandas, config.FS)
-    print(f"Fase 4: Banda óptima encontrada mediante Curtosis en índice {idx_optimo} (j={idx_optimo+1}) con score de {E_min:.4f}.")
+    print(f"Fase 4: Banda óptima encontrada mediante SEE en índice {idx_optimo} (j={idx_optimo+1}) con score de {E_min:.4f}.")
     
     # Probar Fase 5 (Detección peak)
     f_peak, a_peak = encontrar_peak_dominante(f_opt, A_opt)

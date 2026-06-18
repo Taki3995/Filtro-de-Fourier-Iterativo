@@ -1,6 +1,5 @@
 # main.py
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 import os
 import json
@@ -112,29 +111,40 @@ def main():
         falla_identificada = "Ninguna (Fuera del 2%)"
         f_teorica_referencia = None
         
-        # Correlacionar con tolerancia del 2%
+        # Correlacionar con tolerancia del 2% evaluando armónicos 1x, 2x y 3x
         for nombre, f_teo in freqs_teoricas.items():
             if nombre == 'f_r': continue
             
-            limite_inf = f_teo * (1 - config.TOLERANCIA_PEAK)
-            limite_sup = f_teo * (1 + config.TOLERANCIA_PEAK)
-            
-            if limite_inf <= f_peak <= limite_sup:
-                anomalia_detectada = True
-                falla_identificada = nombre
-                f_teorica_referencia = f_teo
+            for armonico in [1, 2, 3]:
+                f_teo_arm = f_teo * armonico
+                limite_inf = f_teo_arm * (1 - config.TOLERANCIA_PEAK)
+                limite_sup = f_teo_arm * (1 + config.TOLERANCIA_PEAK)
+                
+                if limite_inf <= f_peak <= limite_sup:
+                    anomalia_detectada = True
+                    falla_identificada = f"{nombre} (Armónico {armonico}x)"
+                    f_teorica_referencia = f_teo  # Se guarda la teórica fundamental para que el gráfico marque los armónicos correctos
+                    break
+                    
+            if anomalia_detectada:
                 break
                 
-        # Si no hubo coincidencia estricta, tomamos la teórica más cercana para la visualización
+        # Si no hubo coincidencia estricta, tomamos la teórica y el armónico más cercano para la visualización
         if not anomalia_detectada:
-            distancias = {nombre: abs(f_peak - f_teo) for nombre, f_teo in freqs_teoricas.items() if nombre != 'f_r'}
-            falla_identificada = min(distancias, key=distancias.get)
-            f_teorica_referencia = freqs_teoricas[falla_identificada]
-            
+            mejor_distancia = float('inf')
+            for nombre, f_teo in freqs_teoricas.items():
+                if nombre == 'f_r': continue
+                for armonico in [1, 2, 3]:
+                    distancia = abs(f_peak - (f_teo * armonico))
+                    if distancia < mejor_distancia:
+                        mejor_distancia = distancia
+                        falla_identificada = f"{nombre} (Cercano a Armónico {armonico}x)"
+                        f_teorica_referencia = f_teo
+                        
         print(f"J mayúscula utilizada: {config.J_MAX}")
         print(f"Sub-banda óptima (j): {j_optima} (Entropía: {E_min:.4f})")
         print(f"Frecuencia Peak detectado: {f_peak:.2f} Hz")
-        print(f"Falla referencial más cercana: {falla_identificada} a {f_teorica_referencia:.2f} Hz")
+        print(f"Falla referencial: {falla_identificada} (Fundamental en {f_teorica_referencia:.2f} Hz)")
         print(f"¿Cumple tolerancia del 2%?: {'SÍ' if anomalia_detectada else 'NO'}")
         
         # Generar las visualizaciones

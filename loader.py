@@ -1,4 +1,3 @@
-# loader.py
 import numpy as np
 import scipy.io as sio
 from config import MULTIPLICADORES_SKF
