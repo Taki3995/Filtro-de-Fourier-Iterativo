@@ -142,13 +142,13 @@ def main():
         
         # Guardar en diccionario para exportar
         resultados_globales[archivo] = {
-            "j_max_config": config.J_MAX,
-            "j_optima_descubierta": j_optima,
-            "entropia_minima": E_min,
-            "frecuencia_peak_hz": f_peak,
-            "anomalia_identificada": falla_identificada,
-            "frecuencia_teorica_hz": f_teorica_referencia,
-            "validacion_2_porciento": anomalia_detectada
+            "j_max_config": int(config.J_MAX),
+            "j_optima_descubierta": int(j_optima),
+            "entropia_minima": float(E_min),
+            "frecuencia_peak_hz": float(f_peak),
+            "anomalia_identificada": str(falla_identificada),
+            "frecuencia_teorica_hz": float(f_teorica_referencia),
+            "validacion_2_porciento": bool(anomalia_detectada)
         }
         
     # Exportar resultados a un archivo de configuración/salida
