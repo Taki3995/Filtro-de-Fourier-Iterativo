@@ -3,33 +3,29 @@ import numpy as np
 
 def entropia_shannon_espectral(envolvente):
     """
-    Calcula la Entropía de Shannon espectral.
-    CORRECCIÓN: Se elimina la media (Componente DC) para que la frecuencia 
-    0 Hz no destruya la distribución de probabilidad.
+    CORRECCIÓN: Calcula la Entropía de Shannon sobre la Energía de la señal en
+    el dominio temporal. Al elevar el envolvente al cuadrado, se resaltan 
+    exponencialmente los picos impulsivos de los fallos, permitiendo encontrar 
+    la banda de resonancia real sin la inestabilidad del espectro de Fourier.
     """
-    # 1. Eliminar la componente continua (media)
-    envolvente_centrada = envolvente - np.mean(envolvente)
+    # 1. Transformar a Energía
+    energia = envolvente ** 2
     
-    # 2. Calcular amplitud espectral
-    A = np.abs(np.fft.fft(envolvente_centrada))
-    
-    # 3. Solo tomar la mitad positiva del espectro (Nyquist)
-    A = A[:len(A)//2]
-    
-    # 4. Normalizar a probabilidad
-    suma_A = np.sum(A)
-    if suma_A == 0:
+    # 2. Normalizar para obtener la distribución de probabilidad
+    suma_energia = np.sum(energia)
+    if suma_energia == 0:
         return float('inf')
         
-    p = A / suma_A
-    p = p[p > 0]  # Evitar error matemático log2(0)
+    p = energia / suma_energia
+    p = p[p > 0]  # Filtrar para evitar error matemático log2(0)
     
+    # 3. Calcular entropía
     entropia = -np.sum(p * np.log2(p))
     return entropia
 
 def entropia_permutacion(senal, m=3, tau=1):
     """
-    Entropía de Permutación (Alternativa para mejor nota si la requieres).
+    Entropía de Permutación (Alternativa conservada por si deseas probarla).
     """
     N = len(senal)
     if N < m * tau:
