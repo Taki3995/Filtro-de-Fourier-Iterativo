@@ -41,12 +41,14 @@ def evaluar_anomalia(frecuencias, amplitudes, frecuencias_teoricas, tolerancia):
         
         for nombre_falla, frec_teorica in frecuencias_teoricas.items():
             # CORRECCIÓN: Definir la "familia" de frecuencias para la falla
-            # Incluye: Fundamental, Armónico 2X, y Bandas Laterales (+- RPM)
+            # Incluye: Fundamental, Armónico 2X, y Bandas Laterales de 1er y 2do orden (+- RPM y +- 2*RPM)
             familia_frecuencias = [
                 frec_teorica,
                 frec_teorica * 2.0,
                 frec_teorica - rpm_hz,
-                frec_teorica + rpm_hz
+                frec_teorica + rpm_hz,
+                frec_teorica - 2.0 * rpm_hz,  # Segunda banda lateral inferior (clave para 210.mat)
+                frec_teorica + 2.0 * rpm_hz   # Segunda banda lateral superior
             ]
             
             for f_eval in familia_frecuencias:
