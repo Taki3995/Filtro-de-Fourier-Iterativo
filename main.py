@@ -71,9 +71,9 @@ def principal():
             envolvente = calcular_envolvente(senal_filtrada)
             
             # Cálculo de Entropía
-            # Usamos la de Permutación para mayor precisión en vibraciones impulsivas (Mejor Nota)
-            # Puedes cambiarla por: entropia = entropia_shannon_espectral(envolvente)
-            entropia = entropia_permutacion(senal_filtrada, m=3, tau=1)
+            # CORRECCIÓN: Usamos la entropía de Shannon espectral para penalizar ruido 
+            # y detectar correctamente el comportamiento impulsivo de alta frecuencia
+            entropia = entropia_shannon_espectral(envolvente)
             
             # Minimización de la entropía para encontrar la banda de resonancia
             if entropia < mejor_entropia:
