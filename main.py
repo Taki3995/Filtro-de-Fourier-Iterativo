@@ -3,7 +3,7 @@ import glob
 import config
 from data_loader import cargar_senal_mat
 from dsp_utils import filtro_subbanda_iterativo, calcular_envolvente
-from entropy_metrics import entropia_permutacion, entropia_shannon_espectral
+from entropy_metrics import entropia_shannon_espectral
 from anomaly_detector import evaluar_anomalia
 from visualization import graficar_resultados_tarea
 
@@ -39,7 +39,7 @@ def principal():
         amp_plot_cruda = fft_env_cruda[idx_pos]
         
         num_bandas = 2 ** config.J_MAX
-        print(f"Iniciando filtrado en {num_bandas} sub-bandas (J = {config.J_MAX})...")
+        print(f"Iniciando filtrado iterativo y cálculo de entropía de Shannon en {num_bandas} sub-bandas (J = {config.J_MAX})...")
         
         mejor_entropia = float('inf')
         senal_optima = None
@@ -52,11 +52,9 @@ def principal():
             'BSF': config.FREQ_BSF
         }
 
-        # CORRECCIÓN: Inicializar la señal iterativa con la cruda
         senal_actual = senal_cruda.copy()
 
         for j in range(1, num_bandas + 1):
-            # CORRECCIÓN: Filtrar sobre la senal_actual y descomponer restando el filtrado
             senal_filtrada, residuo = filtro_subbanda_iterativo(senal_actual, config.FS, j, config.J_MAX)
             
             # Actualizar la señal para la siguiente iteración con la componente de baja frecuencia (residuo)
@@ -64,6 +62,7 @@ def principal():
             
             envolvente = calcular_envolvente(senal_filtrada)
             
+            # Restaurado el uso de la Entropía de Shannon
             entropia = entropia_shannon_espectral(envolvente)
             
             if entropia < mejor_entropia:
@@ -74,9 +73,9 @@ def principal():
                 
         print(f"\n¡Banda de resonancia encontrada!")
         print(f" -> Sub-banda óptima (j): {j_optimo}")
-        print(f" -> Entropía mínima: {mejor_entropia:.4f}")
+        print(f" -> Entropía mínima (Shannon): {mejor_entropia:.4f}")
         
-        print("\nBuscando peaks en el espectro del envolvente óptimo...")
+        print("\nBuscando peaks (Top 10) en el espectro del envolvente óptimo...")
         fft_env_optimo = np.abs(np.fft.fft(env_optimo))
         amp_plot_optima = fft_env_optimo[idx_pos]
         

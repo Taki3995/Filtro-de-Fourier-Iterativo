@@ -23,4 +23,4 @@ FREQ_BPFO = MULTIPLIER_BPFO * SHAFT_FREQ
 FREQ_BSF = MULTIPLIER_BSF * SHAFT_FREQ
 
 # Tolerancia del algoritmo de detección
-TOLERANCIA_PEAK = 0.02  # 2% de desviación máxima aceptada
+TOLERANCIA_PEAK = 0.01  # 2% de desviación máxima aceptada

@@ -1,11 +1,9 @@
-# entropy_metrics.py
 import numpy as np
 
 def entropia_shannon_espectral(envolvente):
     """
-    CORRECCIÓN: Calcula la Entropía de Shannon sobre la amplitud espectral.
-    Se anula el componente de 0 Hz (DC) para evitar que la energía promedio 
-    destruya la distribución de probabilidad.
+    Calcula la Entropía de Shannon sobre la amplitud espectral.
+    (Restaurada la función original que identificaba las bandas correctamente)
     """
     # 1. Calcular amplitud espectral de Fourier
     A = np.abs(np.fft.fft(envolvente))
@@ -13,7 +11,7 @@ def entropia_shannon_espectral(envolvente):
     # 2. Solo tomar la mitad positiva del espectro (Nyquist)
     A = A[:len(A)//2]
     
-    # 3. CORRECCIÓN CRÍTICA: Anular la componente continua (0 Hz)
+    # 3. Anular la componente continua (0 Hz)
     A[0] = 0.0
     
     # 4. Normalizar para obtener la distribución de probabilidad
@@ -30,7 +28,7 @@ def entropia_shannon_espectral(envolvente):
 
 def entropia_permutacion(senal, m=3, tau=1):
     """
-    Entropía de Permutación (Alternativa conservada por si deseas probarla).
+    Entropía de Permutación (Alternativa conservada).
     """
     N = len(senal)
     if N < m * tau:
