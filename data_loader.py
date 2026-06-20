@@ -1,4 +1,3 @@
-# data_loader.py
 import scipy.io
 import numpy as np
 
@@ -23,5 +22,8 @@ def cargar_senal_mat(ruta_archivo):
         
     # Extracción y aplanamiento a vector 1D de NumPy tipo float64
     senal_cruda = mat_data[llave_de].flatten().astype(np.float64)
+    
+    # CORRECCIÓN: Truncar estrictamente a 120000 muestras (10 segundos)
+    senal_cruda = senal_cruda[:120000]
     
     return senal_cruda

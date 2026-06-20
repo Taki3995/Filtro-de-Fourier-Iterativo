@@ -1,4 +1,3 @@
-# main.py
 import numpy as np
 import glob
 import config
@@ -53,10 +52,15 @@ def principal():
             'BSF': config.FREQ_BSF
         }
 
+        # CORRECCIÓN: Inicializar la señal iterativa con la cruda
+        senal_actual = senal_cruda.copy()
+
         for j in range(1, num_bandas + 1):
-            # CORRECCIÓN: Filtramos iterativamente desde la señal cruda base
-            # para no destruir la energía de las bandas superiores por el residuo
-            senal_filtrada, _ = filtro_subbanda_iterativo(senal_cruda, config.FS, j, config.J_MAX)
+            # CORRECCIÓN: Filtrar sobre la senal_actual y descomponer restando el filtrado
+            senal_filtrada, residuo = filtro_subbanda_iterativo(senal_actual, config.FS, j, config.J_MAX)
+            
+            # Actualizar la señal para la siguiente iteración con la componente de baja frecuencia (residuo)
+            senal_actual = residuo 
             
             envolvente = calcular_envolvente(senal_filtrada)
             

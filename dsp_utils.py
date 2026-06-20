@@ -1,9 +1,8 @@
-# dsp_utils.py
 import numpy as np
 
 def filtro_subbanda_iterativo(senal, fs, j, J):
     """
-    Aplica un filtro pasabanda ideal en el dominio de la frecuencia mediante una ventana rectangular.
+    Aplica un filtro pasabajo ideal en el dominio de la frecuencia mediante una ventana rectangular.
     Retorna la señal filtrada para la j-ésima iteración y el residuo temporal.
     """
     N = len(senal)
@@ -13,7 +12,7 @@ def filtro_subbanda_iterativo(senal, fs, j, J):
     nyquist = fs / 2.0
     ancho_banda = nyquist / (2**J)
     
-    f_min = (j - 1) * ancho_banda
+    f_min = 0.0
     f_max = j * ancho_banda
     
     # Construcción de ventana rectangular simétrica (frecuencias positivas y negativas)

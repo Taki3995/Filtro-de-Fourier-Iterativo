@@ -1,4 +1,3 @@
-# visualization.py
 import matplotlib.pyplot as plt
 
 def graficar_resultados_tarea(t, senal_cruda, frecs_cruda, amp_cruda, 
@@ -23,7 +22,7 @@ def graficar_resultados_tarea(t, senal_cruda, frecs_cruda, amp_cruda,
     axs[0].set_ylabel('Amplitud')
     axs[0].grid(True, linestyle='--', alpha=0.6)
 
-    # 2. Espectro envolvente de la señal cruda con marcadores teóricos
+    # 2. Espectro envolvente de la señal cruda con marcadores teóricos y armónicos
     axs[1].plot(frecs_cruda, amp_cruda, color='black', linewidth=1)
     axs[1].set_title('2. Espectro de Envolvente (Señal Cruda) - Sin frecuencias dominantes claras')
     axs[1].set_xlabel('Frecuencia (Hz)')
@@ -31,10 +30,15 @@ def graficar_resultados_tarea(t, senal_cruda, frecs_cruda, amp_cruda,
     axs[1].set_xlim(0, max(frecs_cruda) / 4) # Hacemos zoom a la zona de interés
     axs[1].grid(True, linestyle='--', alpha=0.6)
     
-    # Inserción de líneas verticales para frecuencias teóricas de fallo en crudo
+    # Inserción de líneas verticales para frecuencias teóricas de fallo y sus armónicos (1X, 2X, 3X)
     for nombre, frec in frecuencias_teoricas.items():
-        axs[1].axvline(x=frec, color=colores_marcadores[nombre], linestyle='--', 
-                       linewidth=1.5, label=f'Teórica {nombre} ({frec:.2f} Hz)')
+        for armonico in [1, 2, 3]:
+            frec_armonico = frec * armonico
+            etiqueta = f'Teórica {nombre} ({frec:.2f} Hz)' if armonico == 1 else ""
+            grosor = 1.5 if armonico == 1 else 1.0
+            alfa = 1.0 if armonico == 1 else 0.5
+            axs[1].axvline(x=frec_armonico, color=colores_marcadores[nombre], linestyle='--', 
+                           linewidth=grosor, alpha=alfa, label=etiqueta)
     axs[1].legend(loc='upper right')
 
     # 3. Serie temporal de la señal óptima filtrada (Sub-banda de menor entropía)
@@ -44,7 +48,7 @@ def graficar_resultados_tarea(t, senal_cruda, frecs_cruda, amp_cruda,
     axs[2].set_ylabel('Amplitud')
     axs[2].grid(True, linestyle='--', alpha=0.6)
 
-    # 4. Espectro envolvente de la señal óptima con marcadores teóricos
+    # 4. Espectro envolvente de la señal óptima con marcadores teóricos y armónicos
     axs[3].plot(frecs_optima, amp_optima, color='darkblue', linewidth=1.2)
     axs[3].set_title('4. Espectro de Envolvente (Señal Óptima) - Detección de Falla')
     axs[3].set_xlabel('Frecuencia (Hz)')
@@ -54,8 +58,13 @@ def graficar_resultados_tarea(t, senal_cruda, frecs_cruda, amp_cruda,
     
     # Inserción de líneas verticales en el espectro óptimo para confirmar cruce de peak
     for nombre, frec in frecuencias_teoricas.items():
-        axs[3].axvline(x=frec, color=colores_marcadores[nombre], linestyle='--', 
-                       linewidth=1.5, label=f'Teórica {nombre} ({frec:.2f} Hz)')
+        for armonico in [1, 2, 3]:
+            frec_armonico = frec * armonico
+            etiqueta = f'Teórica {nombre} ({frec:.2f} Hz)' if armonico == 1 else ""
+            grosor = 1.5 if armonico == 1 else 1.0
+            alfa = 1.0 if armonico == 1 else 0.5
+            axs[3].axvline(x=frec_armonico, color=colores_marcadores[nombre], linestyle='--', 
+                           linewidth=grosor, alpha=alfa, label=etiqueta)
     axs[3].legend(loc='upper right')
 
     plt.tight_layout(rect=[0, 0.03, 1, 0.96]) # Ajuste para que el título principal no se superponga

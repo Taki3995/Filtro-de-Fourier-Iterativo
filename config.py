@@ -5,7 +5,7 @@ FS = 12000  # Frecuencia de muestreo en Hz
 NYQUIST = FS / 2.0  # Límite del espectro de Nyquist (6000 Hz)
 
 # Parámetros del filtro iterativo
-J_MAX = 4  # CORRECCIÓN: J=4 para evitar fragmentar la resonancia del impacto
+J_MAX = 5  # CORRECCIÓN: J=4 para evitar fragmentar la resonancia del impacto
 
 # Parámetros mecánicos (Rodamiento Drive End - SKF 6205-2RS JEM)
 # Carga = 1 hp -> Velocidad del eje = 1772 RPM
