@@ -23,7 +23,7 @@ def graficar_resultados_tarea(t, senal_cruda, frecs_cruda, amp_cruda,
 
     # 2. Espectro envolvente de la señal cruda con marcadores teóricos y armónicos
     axs[1].plot(frecs_cruda, amp_cruda, color='black', linewidth=1)
-    axs[1].set_title('2. Espectro de Envolvente (Señal Cruda) - Sin frecuencias dominantes claras')
+    axs[1].set_title('\n\n2. Espectro de Envolvente (Señal Cruda) - Sin frecuencias dominantes claras')
     axs[1].set_xlabel('Frecuencia (Hz)')
     axs[1].set_ylabel('Amplitud Espectral')
     axs[1].set_xlim(0, max(frecs_cruda) / 4) # Hacemos zoom a la zona de interés
@@ -42,14 +42,14 @@ def graficar_resultados_tarea(t, senal_cruda, frecs_cruda, amp_cruda,
 
     # 3. Serie temporal de la señal óptima filtrada (Sub-banda de menor entropía)
     axs[2].plot(t, senal_optima, color='blue', alpha=0.8)
-    axs[2].set_title('3. Serie Temporal Óptima Filtrada (Sub-banda de menor Entropía)')
+    axs[2].set_title('\n\n3. Serie Temporal Óptima Filtrada (Sub-banda de menor Entropía)')
     axs[2].set_xlabel('Tiempo (s)')
     axs[2].set_ylabel('Amplitud')
     axs[2].grid(True, linestyle='--', alpha=0.6)
 
     # 4. Espectro envolvente de la señal óptima con marcadores teóricos y armónicos
     axs[3].plot(frecs_optima, amp_optima, color='darkblue', linewidth=1.2)
-    axs[3].set_title('4. Espectro de Envolvente (Señal Óptima) - Detección de Falla')
+    axs[3].set_title('\n\n4. Espectro de Envolvente (Señal Óptima) - Detección de Falla')
     axs[3].set_xlabel('Frecuencia (Hz)')
     axs[3].set_ylabel('Amplitud Espectral')
     axs[3].set_xlim(0, max(frecs_optima) / 4) # Zoom asimétrico igual que en crudo
