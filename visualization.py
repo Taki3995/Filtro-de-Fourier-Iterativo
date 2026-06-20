@@ -2,10 +2,9 @@ import matplotlib.pyplot as plt
 
 def graficar_resultados_tarea(t, senal_cruda, frecs_cruda, amp_cruda, 
                               senal_optima, frecs_optima, amp_optima, 
-                              frecuencias_teoricas):
+                              frecuencias_teoricas, ruta_archivo):
     """
-    Genera una figura con 4 subgráficos (subplots) cumpliendo
-    estrictamente con las instrucciones de visualización requeridas.
+    Genera una figura con 4 subgráficos (subplots) y la guarda como un archivo .png.
     """
     # Configuración del lienzo general
     fig, axs = plt.subplots(4, 1, figsize=(12, 16))
@@ -68,4 +67,10 @@ def graficar_resultados_tarea(t, senal_cruda, frecs_cruda, amp_cruda,
     axs[3].legend(loc='upper right')
 
     plt.tight_layout(rect=[0, 0.03, 1, 0.96]) # Ajuste para que el título principal no se superponga
-    plt.show()
+    
+    # Guardar la figura en la misma carpeta agregando "resultados_" y reemplazando .mat por .png
+    nombre_salida = "resultados_" + ruta_archivo.replace('.mat', '.png')
+    plt.savefig(nombre_salida)
+    
+    # Cerrar la figura para liberar memoria y no interrumpir el ciclo
+    plt.close(fig)

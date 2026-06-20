@@ -1,11 +1,9 @@
-# config.py
-
 # Parámetros generales de la señal
 FS = 12000  # Frecuencia de muestreo en Hz
 NYQUIST = FS / 2.0  # Límite del espectro de Nyquist (6000 Hz)
 
 # Parámetros del filtro iterativo
-J_MAX = 5  # CORRECCIÓN: J=4 para evitar fragmentar la resonancia del impacto
+J_MAX = 5 
 
 # Parámetros mecánicos (Rodamiento Drive End - SKF 6205-2RS JEM)
 # Carga = 1 hp -> Velocidad del eje = 1772 RPM
@@ -24,3 +22,7 @@ FREQ_BSF = MULTIPLIER_BSF * SHAFT_FREQ
 
 # Tolerancia del algoritmo de detección
 TOLERANCIA_PEAK = 0.01  # 2% de desviación máxima aceptada
+
+# Parámetros de ajuste dinámico para la detección
+LOWER_LIMIT_MULTIPLIER = 2.2  # Corta ruido de giro (1X) y su primer armónico (2X)
+TOP_PEAKS_EVAL = 12  # Margen de seguridad equilibrado para evitar falsos positivos

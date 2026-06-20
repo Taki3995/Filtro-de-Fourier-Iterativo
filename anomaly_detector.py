@@ -1,5 +1,5 @@
 import numpy as np
-import config  # Importado para acceder a la velocidad del eje (SHAFT_FREQ)
+import config
 
 def encontrar_picos_numpy(amplitudes):
     """
@@ -13,13 +13,14 @@ def encontrar_picos_numpy(amplitudes):
 
 def evaluar_anomalia(frecuencias, amplitudes, frecuencias_teoricas, tolerancia):
     """
-    Evalúa los Top 20 picos de mayor amplitud comparándolos con las frecuencias teóricas puras.
-    Ignora frecuencias por debajo de 65.0 Hz para evitar ruido estructural y de giro.
+    Evalúa los picos de mayor amplitud comparándolos con las frecuencias teóricas puras.
+    Utiliza un filtro dinámico inferior para evadir ruido estructural y de giro.
     """
     indices_picos = encontrar_picos_numpy(amplitudes)
     
-    # Filtro estricto: Ignorar frecuencias bajas (incluyendo giro de motor 1X y 2X)
-    indices_validos = [i for i in indices_picos if frecuencias[i] > 65.0]
+    # Filtro dinámico: Ignorar frecuencias bajas basadas en la cinemática del eje
+    limite_frecuencia = config.LOWER_LIMIT_MULTIPLIER * config.SHAFT_FREQ
+    indices_validos = [i for i in indices_picos if frecuencias[i] > limite_frecuencia]
     
     if not indices_validos:
         return False, None, 0.0, 0.0
@@ -27,8 +28,8 @@ def evaluar_anomalia(frecuencias, amplitudes, frecuencias_teoricas, tolerancia):
     # Ordenar los índices de mayor a menor amplitud
     indices_ordenados = sorted(indices_validos, key=lambda i: amplitudes[i], reverse=True)
     
-    # Seleccionar los Top 20 peaks de mayor energía (Asegura atrapar fallas tenues como BSF)
-    top_indices = indices_ordenados[:20]
+    # Seleccionar solo los picos principales según configuración (Ej: Top 3)
+    top_indices = indices_ordenados[:config.TOP_PEAKS_EVAL]
     
     # Comprobar la tolerancia (2%) contra las frecuencias teóricas para los peaks
     for idx in top_indices:

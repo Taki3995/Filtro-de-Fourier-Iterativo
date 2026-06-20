@@ -62,7 +62,7 @@ def principal():
             
             envolvente = calcular_envolvente(senal_filtrada)
             
-            # Restaurado el uso de la Entropía de Shannon
+            # Uso de la Entropía de Shannon
             entropia = entropia_shannon_espectral(envolvente)
             
             if entropia < mejor_entropia:
@@ -75,7 +75,7 @@ def principal():
         print(f" -> Sub-banda óptima (j): {j_optimo}")
         print(f" -> Entropía mínima (Shannon): {mejor_entropia:.4f}")
         
-        print("\nBuscando peaks (Top 10) en el espectro del envolvente óptimo...")
+        print(f"\nBuscando peaks (Top {config.TOP_PEAKS_EVAL}) en el espectro del envolvente óptimo...")
         fft_env_optimo = np.abs(np.fft.fft(env_optimo))
         amp_plot_optima = fft_env_optimo[idx_pos]
         
@@ -95,11 +95,11 @@ def principal():
                  print(f"El peak máximo evaluado ({frec_dom:.2f} Hz) no coincide con ninguna frecuencia teórica.")
         print("-" * 50)
                  
-        print(f"\nGenerando dashboard de visualización para {ruta_archivo}...")
+        print(f"\nGenerando y guardando dashboard de visualización para {ruta_archivo}...")
         graficar_resultados_tarea(
             t, senal_cruda, frecs_plot_cruda, amp_plot_cruda,
             senal_optima, frecs_plot_cruda, amp_plot_optima,
-            frecuencias_teoricas
+            frecuencias_teoricas, ruta_archivo
         )
 
 if __name__ == '__main__':
