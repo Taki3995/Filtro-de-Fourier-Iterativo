@@ -96,10 +96,15 @@ def principal():
         print("-" * 50)
                  
         print(f"\nGenerando y guardando dashboard de visualización para {ruta_archivo}...")
+        
+        # Calcular el límite de ruido dinámico para enviarlo al gráfico
+        limite_ruido = config.LOWER_LIMIT_MULTIPLIER * config.SHAFT_FREQ
+        
         graficar_resultados_tarea(
             t, senal_cruda, frecs_plot_cruda, amp_plot_cruda,
             senal_optima, frecs_plot_cruda, amp_plot_optima,
-            frecuencias_teoricas, ruta_archivo
+            frecuencias_teoricas, ruta_archivo, 
+            limite_ruido, frec_dom, amp_dom
         )
 
 if __name__ == '__main__':

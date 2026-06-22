@@ -2,7 +2,8 @@ import matplotlib.pyplot as plt
 
 def graficar_resultados_tarea(t, senal_cruda, frecs_cruda, amp_cruda, 
                               senal_optima, frecs_optima, amp_optima, 
-                              frecuencias_teoricas, ruta_archivo):
+                              frecuencias_teoricas, ruta_archivo,
+                              limite_ruido=None, frec_dom=None, amp_dom=None):
     """
     Genera una figura con 4 subgráficos (subplots) y la guarda como un archivo .png.
     """
@@ -54,6 +55,20 @@ def graficar_resultados_tarea(t, senal_cruda, frecs_cruda, amp_cruda,
     axs[3].set_ylabel('Amplitud Espectral')
     axs[3].set_xlim(0, max(frecs_optima) / 4) # Zoom asimétrico igual que en crudo
     axs[3].grid(True, linestyle='--', alpha=0.6)
+    
+    # NUEVO: Sombreado del área de límite de ruido dinámico
+    if limite_ruido is not None:
+        axs[3].axvspan(0, limite_ruido, color='gray', alpha=0.3, label=f'Zona Ruido Ignorada (< {limite_ruido:.1f} Hz)')
+
+    # NUEVO: Marcador del pico dominante detectado
+    if frec_dom is not None and amp_dom is not None:
+        axs[3].plot(frec_dom, amp_dom, marker='o', color='magenta', markersize=6, label=f'Pico Detectado ({frec_dom:.2f} Hz)')
+        axs[3].annotate(f'{frec_dom:.2f} Hz', 
+                        xy=(frec_dom, amp_dom), 
+                        xytext=(15, 15), 
+                        textcoords='offset points',
+                        arrowprops=dict(arrowstyle="->", connectionstyle="arc3"),
+                        fontsize=10, fontweight='bold', color='magenta')
     
     # Inserción de líneas verticales en el espectro óptimo para confirmar cruce de peak
     for nombre, frec in frecuencias_teoricas.items():
