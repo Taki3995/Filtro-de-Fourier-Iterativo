@@ -20,30 +20,21 @@ El sistema viene pre-configurado para el dataset estándar de la CWRU:
 - Frecuencia de muestreo (FS): 12,000 Hz
 - Carga: 1 HP (1772 RPM)
 
-4. GUÍA DE ADAPTACIÓN PARA OTROS DATASETS (Ej: CWRU 48kHz)
-Si deseas utilizar otros archivos de la misma base de datos (por ejemplo, los archivos grabados a 48,000 Hz o con diferentes cargas de motor), DEBES modificar los siguientes parámetros para evitar fallos matemáticos en la detección.
+4. GUÍA DE ADAPTACIÓN PARA OTROS DATASETS
+Si deseas utilizar otros archivos de la misma base de datos, DEBES modificar los siguientes parámetros para evitar fallos matemáticos en la detección.
 
 A) Modificaciones en `config.py`
 
-   1. Frecuencia de Muestreo (FS):
-      - ¿Por qué?: El algoritmo necesita saber cuántas muestras equivalen a 1 segundo para calcular correctamente la Transformada de Fourier.
-      - Qué cambiar: Modifica `FS = 12000` al valor correspondiente de tu dataset (ej: `FS = 48000`).
-
-   2. Niveles de Descomposición (J_MAX):
-      - ¿Por qué?: Define la cantidad de sub-bandas (2^J). Al subir la frecuencia de muestreo, el ancho de banda total crece. Si no aumentas 'J', las bandas serán demasiado anchas y la entropía no podrá aislar el fallo.
-      - Qué cambiar: Para 12k Hz usa `J_MAX = 5` (32 bandas). Para 48k Hz usa `J_MAX = 7` (128 bandas).
-
-   3. Velocidad del Eje (RPM):
-      - ¿Por qué?: Las frecuencias de fallo teóricas se calculan multiplicando la velocidad de giro por la cinemática del rodamiento. Si la carga del motor cambia, las RPM cambian, y si no lo ajustas, el algoritmo buscará la falla en la frecuencia equivocada.
+   1. Velocidad del Eje (RPM):
+      - Las frecuencias de fallo teóricas se calculan multiplicando la velocidad de giro por la cinemática del rodamiento. Si la carga del motor cambia, las RPM cambian, y si no lo ajustas, el algoritmo buscará la falla en la frecuencia equivocada.
       - Qué cambiar: Revisa la tabla de tu dataset y ajusta la variable `RPM`.
         * 0 HP = 1797 RPM
         * 1 HP = 1772 RPM
         * 2 HP = 1750 RPM
         * 3 HP = 1730 RPM
 
-   4. Tolerancia de Detección (TOLERANCIA_PEAK):
-      - ¿Por qué?: Es el margen de error permitido entre el pico detectado y la frecuencia matemática teórica.
-      - Qué cambiar: Por defecto es `0.01` (1%). Si en otros datasets (como 48k) hay mayor fluctuación de velocidad en el motor, puedes relajar este parámetro a `0.02` (2%).
+   2. Tolerancia de Detección (TOLERANCIA_PEAK):
+      - Por defecto es `0.01` (1%). Si en otros datasets (como 48k) hay mayor fluctuación de velocidad en el motor, puedes relajar este parámetro a `0.02` (2%).
 
 B) Modificaciones en `data_loader.py`
 
